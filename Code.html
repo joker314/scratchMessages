@@ -1,0 +1,164 @@
+<html>
+<body>
+<div style="text-align: center;">
+<a href="http://scratchmessages.blogspot.com/">Click here to choose another username </a> <br />
+Note: The messages number updates every 3 seconds on default. To make the inteval higher, use the button at the bottom of the page. <br /> <br /> <br />
+<span style="color: red; font-size: 40pt;"><span id="username">[The username you'll choose]</span> has
+</span>
+<span style="color: red; font-size: 40pt;"><br /></span>
+<span style="color: red; font-size: 40pt;"><br /></span>
+<br />
+<div id="demo">
+</div>
+</div>
+<div style="text-align: center;">
+<br>
+<span style="color: red; font-size: 40pt;">messages right now</span> <br />
+<br /> <br /> <br /> <input id="intervalChange" onclick="doFunction();" type="button" value="Change interval" />
+<br /> <br /> <br /> <input id="urlShortener" onclick="doFunction();" type="button" value="Get a short link to this user's messages number " />
+
+
+
+
+
+<script>
+// VARIABLES
+var termsread = getCookie('terms'); // Check if terms were accepted
+
+var interval = 3000;                // Default interval (3 seconds)
+
+var user = location.hash.substr(1); // Checks if there's an user in the URL after the hash
+
+// Variable that turns the usernames to uppercase to then see if the chosen user is in any array
+var usercase = user.toUpperCase();
+// Whitelist and blacklist
+var whitelist = ['CUSTOMHACKER', '0PRO_FUZION_SLIME', 'VAMPIRE94937', 'HIMANISHV', '-SUPERSCRATCH-', 'RACINGHANS', 'BLADEBERRY90', '-TIDE-', 'THINKTDM'];
+var blacklist = ['GAMERGIRL1284', 'LITTLEPUPPY14', 'PIZZAGOBLIN', 'JERAMY66', 'THE_TROLLFACE', 'SWEETPOTATO140', 'WILLOWPAW_62', 'NINJAYALUN'];
+
+// VARIABLES
+
+
+
+// TERMS
+if (termsread != 1) {
+if (contains(whitelist,usercase)) {} else {
+var confirmed = confirm("By clicking on 'Accept', you will be able to run a script that asks the Scratch servers for someone's unread messages number, that is currently public on the Scratch API. The usage of this tool will result on the viewer decision, viewer's request to the Scratch servers, and viewer's choice to see other user's unread messages number. \nIf you don't agree with these terms, just click 'Cancel' \n\nIf you don't want people looking to your number, just tell that to @World_Languages on his profile, and he will unable the usage of this tool with your username in less than 36 hours. \n\n\n\nTo go to the website, press on 'OK'. ");}
+if (confirmed === false) {
+window.location.href = 'http://scratchmessages.blogspot.com/p/you-didnt-accept-terms.html';
+stopScript;}}
+
+if (confirmed === true) {       // Creates cookie showing they accepted the terms
+createCookie('terms', '1', 1000);}
+// TERMS
+
+
+
+// Asks for a username if neccesary, checks if there's an @, makes the username uppercase.
+if (user == '') {var x = prompt("Enter a username (not case sensitive)", "kaj");
+var user = (x[0]=="@")?x.substr(1):x;
+var usercase = user.toUpperCase();}
+
+// Checks blacklist
+if (contains(blacklist,usercase)) {
+confirm("The owner of that account didn't want their messages number to be public. Try another account.");
+window.location.href = 'http://scratchmessages.blogspot.com/';
+stopScript();}
+
+// Check if answer was empty
+if (user == '') {
+window.location.href = 'http://scratchmessages.blogspot.com/';
+stopScript();}
+
+
+// Link to the user and button functions
+document.getElementById("username").innerHTML = "<a href='https://scratch.mit.edu/users/" + user + "'>" + user + "</a>";
+document.getElementById("demo").innerHTML = "Username doesn't exist, or waiting for you to accept an alert.";
+document.getElementById("intervalChange").onclick = setInterval;
+document.getElementById("urlShortener").onclick = urlShortener;
+
+
+
+
+// Check messages
+(function(){
+var xmlHttp = new XMLHttpRequest();
+xmlHttp.open( "GET", 'https://api.scratch.mit.edu/users/' + user + '/messages/count', false );
+xmlHttp.send( null );
+var request = xmlHttp.responseText;
+var parsedData = JSON.parse(request);
+var msgnum = (parsedData.count);
+if (msgnum>70000) {
+interval = 99999999999999;
+alert('Number will not update automatically because it is too big, and updating it without you wanting to could crash your browser.');}
+var msgnumcommas = numberWithCommas(msgnum);
+var result = msgnumcommas.fontsize(20);
+document.getElementById("demo").innerHTML = result;
+document.title = msgnumcommas + ' messages';
+    setTimeout(arguments.callee, interval);
+})();
+
+
+
+// FUNCTIONS !
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+function createCookie(name, value, days) {
+    var expires;
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    }
+    else {
+        expires = "";
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+function getCookie(c_name) {
+    if (document.cookie.length > 0) {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1) {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) {
+                c_end = document.cookie.length;
+            }
+            return unescape(document.cookie.substring(c_start, c_end));
+        }
+    }
+    return "";
+}
+
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//Button functions
+function setInterval() {
+var changeinterval = 0;
+var ask = prompt('Enter an interval in seconds. It cannot be more than 3. Current interval: ' + interval/1000);
+if (ask>2.99999999999999) {
+if (ask<10000000) {
+changeinterval = 1;}}
+
+if (changeinterval == 1) {
+interval = ask*1000;
+alert('Changed interval to: ' + interval/1000);}
+else {
+alert('Could not change the interval. Make sure you did not write a number below 3.');}
+}
+
+function urlShortener() {
+prompt("Paste anywhere the URL below to share this user's messages number",'http://msgs.mex.tl/#' + user);}
+
+// FUNCTIONS!
+</script> </div>
+</body>
+</html>
